@@ -36,7 +36,7 @@ var q = new qoper8.masterProcess();
 q.on('start', function() {
   this.toggleLogging();
   this.worker.poolSize = 1;
-  this.worker.module = 'examples/modules/workerModule2';
+  this.worker.module = process.cwd() + '/examples/modules/workerModule2';
 });
 
 q.on('stop', function() {
