@@ -32,12 +32,14 @@ ewd-qoper8 is pre-configured with a set of default methods that essentially take
 action. You can therefore very simply test ewd-qoper8 by writing and running the following script
 file:
 ```javascript
+'use strict';
+
 var qoper8 = require('ewd-qoper8');
 var q = new qoper8.masterProcess();
 console.log(q.version() + ' running in process ' + process.pid);
 q.start();
 ```
-*(You'll find a copy of this in the /tests sub-folder within the ewd-qoper8 module folder - see test1.js)*
+*(You'll find a copy of this in the /examples sub-folder within the ewd-qoper8 module folder - see test1.js)*
 
 This example will start the ewd-qoper8 master process, with a worker process pool size of 1. It will
 then sit waiting for messages to be added to the queue - which isn't going to happen in this script.
@@ -49,7 +51,7 @@ started when:
 So if you run the above script you should just see something like this:
 
 ```
-robtweed@ubuntu:~/qoper8$ sudo node node_modules/ewd-qoper8/lib/tests/test1
+robtweed@ubuntu:~/ewd-qoper8-examples$ node examples/test1
 ewd-qoper8 Build 3.0.0; 1 March 2016 running in process 12599
 Worker Bootstrap Module file written to node_modules/ewd-qoper8-worker.js
 ========================================================
@@ -72,8 +74,8 @@ Master process will now shut down
 ```
 Alternatively we could add something like the following at the end of the test script:
 ```javascript
-setTimeout(function() {
- q.stop();
+setTimeout(function () {
+  q.stop();
 }, 10000);
 ```
 This time, after 10 seconds you'll now see ewd-qoper8 shut itself down
@@ -83,29 +85,35 @@ This time, after 10 seconds you'll now see ewd-qoper8 shut itself down
 
 You use ewd-qoper8's `addToQueue()` method to add messages to the queue. Messages are JavaScript objects and should have a type property defined. The type value is entirely up to you. Defining a type assists in message and response handling. The built-in logging reports will assume your messages have a type property.
 
-So we could do the following test (see test2.js in the /tests sub-folder):
+So we could do the following test (see test2.js in the /examples sub-folder):
 ```javascript
+'use strict';
+
 var qoper8 = require('ewd-qoper8');
 var q = new qoper8.masterProcess();
-q.on('started', function() {
- console.log(q.version() + ' running in process ' + process.pid);
- var messageObj = {
- type: 'testMessage1',
- hello: 'world'
- };
- this.addToQueue(messageObj);
+
+q.on('started', function () {
+  console.log(q.version() + ' running in process ' + process.pid);
+  var messageObj = {
+    type: 'testMessage1',
+    hello: 'world'
+  };
+  this.addToQueue(messageObj);
 });
+
 q.start();
-setTimeout(function() {
- q.stop();
+
+setTimeout(function () {
+  q.stop();
 }, 10000);
+
 ```
 Any ewd-qoper8 activity should be defined within its 'started' event handler. In the example above you can see a message object being created and queued using `this.addToQueue()` within the
 q.on('started') handler.
 
 Running the above script should produce output similar to the following:
 ```
-robtweed@ubuntu:~/qoper8$ sudo node node_modules/ewd-qoper8/lib/tests/test2
+robtweed@ubuntu:~/ewd-qoper8-examples$ node examples/test2
 Worker Bootstrap Module file written to node_modules/ewd-qoper8-worker.js
 ========================================================
 ewd-qoper8 is up and running. Max worker pool size: 1
@@ -144,32 +152,39 @@ As before, if you don't use ewd-qoper8's `stop()` method within your script, CTR
 
 ## <a id="toe-handling-multiple-messages"></a>Handling Multiple Messages
 
-So far we've only queued a single message. It's worth looking at what happens if multiple messages are added to the queue. The following example (see test3.js in the /tests folder) will
+So far we've only queued a single message. It's worth looking at what happens if multiple messages are added to the queue. The following example (see test3.js in the /examples folder) will
 queue two messages:
 ```javascript
+'use strict';
+
 var qoper8 = require('ewd-qoper8');
 var q = new qoper8.masterProcess();
-q.on('started', function() {
- var messageObj = {
- type: 'testMessage1',
- hello: 'world'
- };
- this.addToQueue(messageObj);
- messageObj = {
- type: 'testMessage2',
- hello: 'rob'
- };
- this.addToQueue(messageObj);
+
+q.on('started', function () {
+  var messageObj = {
+    type: 'testMessage1',
+    hello: 'world'
+  };
+  this.addToQueue(messageObj);
+  
+  messageObj = {
+    type: 'testMessage2',
+    hello: 'rob'
+  };
+  this.addToQueue(messageObj);
 });
+
 q.start();
-setTimeout(function() {
- q.stop();
+
+setTimeout(function () {
+  q.stop();
 }, 5000);
+
 ```
 
 The output should look something like this:
 ```
-robtweed@ubuntu:~/qoper8$ sudo node node_modules/ewd-qoper8/lib/tests/test3
+robtweed@ubuntu:~/ewd-qoper8-examples$ node examples/test3
 Worker Bootstrap Module file written to node_modules/ewd-qoper8-worker.js
 ========================================================
 ewd-qoper8 is up and running. Max worker pool size: 1
@@ -213,51 +228,61 @@ Configuration of ewd-qoper8 is done by modifying its various default properties.
 
 For example, you can specify a worker process pool size of 2 in one of two ways:
 ```javascript
-q.on('start', function() {
- this.setWorkerPoolSize(2);
+q.on('start', function () {
+  this.setWorkerPoolSize(2);
 });
 ```
+
 or:
 ```javascript
-q.on('start', function() {
+q.on('start', function () {
  this.worker.poolSize = 2;
 });
 ```
 
 If you modify the previous example to use 2 worker processes, you should see a quite different
 result, particularly if you queue up a larger number of message. For example, take the following
-script (see test4.js in the /tests folder):
+script (see test4.js in the /examples folder):
 ```javascript
+'use strict';
+
 var qoper8 = require('ewd-qoper8');
 var q = new qoper8.masterProcess();
-q.on('start', function() {
- this.setWorkerPoolSize(2);
+
+q.on('start', function () {
+  this.setWorkerPoolSize(2);
 });
-q.on('started', function() {
- var noOfMessages = 5;
- var messageObj;
- for (var i = 0; i < noOfMessages; i++) {
- messageObj = {
- type: 'testMessage1',
- hello: 'world'
- };
- this.addToQueue(messageObj);
- }
+
+q.on('started', function () {
+  var noOfMessages = 5;
+  var messageObj;
+  
+  for (var i = 0; i < noOfMessages; i++) {
+    messageObj = {
+      type: 'testMessage1',
+      hello: 'world'
+    };
+    this.addToQueue(messageObj);
+  }
 });
+
 q.start();
-setTimeout(function() {
- q.getAllWorkerStats();
+
+setTimeout(function () {
+  q.getAllWorkerStats();
 }, 5000);
-setTimeout(function() {
- q.stop();
+
+setTimeout(function () {
+  q.stop();
 }, 10000);
+
 ```
 
 The worker pool size is being increased to 2 within the `q.on('start')` handler. Within the `q.on('started')` handler, 5 messages are being queued. After 5 seconds, the `q.getAllWorkerStats()` method is invoked: this will ask each worker process to report back a number of vital statistics, including the number of messages it has processed.
 
 Here's an example of the output generated by this script:
 ```
-rrobtweed@ubuntu:~/qoper8$ sudo node node_modules/ewd-qoper8/lib/tests/test4
+rrobtweed@ubuntu:~/ewd-qoper8-examples$ node examples/test4
 Worker Bootstrap Module file written to node_modules/ewd-qoper8-worker.js
 ========================================================
 ewd-qoper8 is up and running. Max worker pool size: 2
@@ -361,22 +386,27 @@ Your module can define any of the following event handlers:
 
 Here's a simple example of a worker module:
 ```javascript
-module.exports = function() {
- this.on('start', function() {
- if (this.log) console.log('Worker process ' + process.pid + ' starting...');
- });
- this.on('message', function(messageObj, send, finished) {
- var response = {
- hello: 'world'
- };
- finished(response);
- });
- this.on('stop', function() {
- if (this.log) console.log('Worker process ' + process.pid + ' stopping...');
- });
+'use strict';
 
+module.exports = function () {
+
+  this.on('start', function () {
+    if (this.log) console.log('Worker process ' + process.pid + ' starting...');
+  });
+
+  this.on('message', function (messageObj, send, finished) {
+    var response = {
+      hello: 'world'
+    };
+    finished(response);
+  });
+
+  this.on('stop', function () {
+    if (this.log) console.log('Worker process ' + process.pid + ' stopping...');
+  });
 };
 ```
+
 You should always adhere to the pattern shown above:
 - create a function that is exported from the module
 - the function should have no arguments
@@ -431,17 +461,17 @@ You instruct ewd-qoper8 to load your worker module by setting the property `this
 
 For example, if you saved your module in `./node_modules/exampleModule.js`, then you instruct ewd-qoper8 to load it as follows, eg:
 ```javascript
-q.on('start', function() {
+q.on('start', function () {
  this.worker.module = 'exampleModule';
 });
 ```
 
-If your module is saved elsewhere, modify the module path accordingly. For example if you look at the example script test5.js in the /tests folder, you'll see that it specifies:
+If your module is saved elsewhere, modify the module path accordingly. For example if you look at the example script test5.js in the /examples folder, you'll see that it specifies:
 
 ```javascript
-q.on('start', function() {
- this.setWorkerPoolSize(2);
- this.worker.module = 'ewd-qoper8/lib/tests/example-worker-module';
+q.on('start', function () {
+  this.setWorkerPoolSize(2);
+  this.worker.module = process.cwd() + '/examples/modules/example-worker-module';
 });
 ```
 Try running the test5.js script to see the effect of this module on the messages returned to the master process.
@@ -455,8 +485,8 @@ which is to simply report the returned result message to the console.
 The basic mechanism for handling messages returned by worker processes is to define an `on('response')` handler, eg:
 
 ```javascript
-q.on('response', function(responseObj, pid) {
- console.log('Received from worked ' + pid + ': ' + JSON.stringify(responseObj, null, 2));
+q.on('response', function (responseObj, pid) {
+  console.log('Received from worked ' + pid + ': ' + JSON.stringify(responseObj, null, 2));
 });
 ```
 
@@ -469,37 +499,45 @@ properties and methods.
 
 Note that your `on('response')` handler function method intercepts all messages returned by worker processes, including ewd-qoper8's own ones. You'll be able to distinguish them because their type will have 'qoper8-' as a prefix.
 
-For a worked example, take a look at test6.js in the /tests folder:
+For a worked example, take a look at test6.js in the /examples folder:
 ```javascript
+'use strict';
 var qoper8 = require('ewd-qoper8');
 var q = new qoper8.masterProcess();
-q.on('start', function() {
- this.setWorkerPoolSize(2);
- this.worker.module = 'ewd-qoper8/lib/tests/test-workerModule1';
+
+q.on('start', function () {
+  this.setWorkerPoolSize(2);
+  this.worker.module = process.cwd() +  '/examples/modules/test-workerModule1';
 });
-q.on('response', function(responseObj, pid) {
- console.log('Received from worked ' + pid + ': ' + JSON.stringify(responseObj, null, 2));
+
+q.on('response', function (responseObj, pid) {
+  console.log('Received from worked ' + pid + ': ' + JSON.stringify(responseObj, null, 2));
 });
-q.on('started', function() {
- var noOfMessages = 5;
- var messageObj;
- for (var i = 0; i < noOfMessages; i++) {
- messageObj = {
- type: 'testMessage1',
- hello: 'world'
- };
- this.addToQueue(messageObj);
- }
+
+q.on('started', function () {
+  var noOfMessages = 5;
+  var messageObj;
+  
+  for (var i = 0; i < noOfMessages; i++) {
+    messageObj = {
+      type: 'testMessage1',
+      hello: 'world'
+    };
+    this.addToQueue(messageObj);
+  }
 });
+
 q.start();
-setTimeout(function() {
- console.log(q.getStats());
- q.getWorkerAvailability(function(available) {
- console.log('Worker availability: ' + JSON.stringify(available));
- });
+
+setTimeout(function () {
+  console.log(q.getStats());
+  q.getWorkerAvailability(function (available) {
+    console.log('Worker availability: ' + JSON.stringify(available));
+  });
 }, 5000);
-setTimeout(function() {
- q.stop();
+
+setTimeout(function () {
+  q.stop();
 }, 10000);
 ```
 
@@ -515,51 +553,61 @@ The `handleMessage()` function has two arguments:
 
 Note that the callback function will fire for messages sent from the worker process using both the `send()` and `finished()` methods.
 
-For a worked example, take a look at test7.js in the /tests folder:
+For a worked example, take a look at test7.js in the /examples folder:
 ```javascript
-'use strict'
+'use strict';
+
 var qoper8 = require('ewd-qoper8');
 var q = new qoper8.masterProcess();
-q.on('start', function() {
- this.toggleLogging();
- this.worker.poolSize = 1;
- this.worker.module = 'ewd-qoper8/lib/tests/test-workerModule2';
+
+q.on('start', function () {
+  this.toggleLogging();
+  this.worker.poolSize = 1;
+  this.worker.module = process.cwd() + '/examples/modules/test-workerModule2';
 });
-q.on('stop', function() {
- console.log(this.getStats());
+
+q.on('stop', function () {
+  console.log(this.getStats());
 });
-q.on('started', function() {
- var noOfMessages = 5;
- var messageObj;
- for (let i = 0; i < noOfMessages; i++) {
- messageObj = {
- type: 'testMessage1',
- hello: 'world'
- };
- this.handleMessage(messageObj, function(response) {
- console.log('** response received for message ' + i + ': ' + JSON.stringify(response));
- });
- }
+
+q.on('started', function () {
+  var noOfMessages = 5;
+  var messageObj;
+  
+  for (var i = 0; i < noOfMessages; i++) {
+    messageObj = {
+      type: 'testMessage1',
+      hello: 'world'
+    };
+
+    this.handleMessage(messageObj, function (response) {
+      console.log('** response received for message ' + i + ': ' + JSON.stringify(response));
+    });
+  }
 });
+
 q.start();
-setTimeout(function() {
- q.stop();
+
+setTimeout(function () {
+  q.stop();
 }, 10000);
 ```
 Here's the `on('message')` handler in the worker module for this example:
 ```javascript
- this.on('message', function(messageObj, send, finished) {
- send({
- info: 'intermediate message',
- pid: process.pid
- });
- count++;
- var results = {
- count: count,
- time: new Date().toString()
- };
- finished(results);
- });
- ```
+this.on('message', function (messageObj, send, finished) {
+  send({
+    info: 'intermediate message',
+    pid: process.pid
+  });
+
+  count++;
+  
+  var results = {
+    count: count,
+    time: new Date().toString()
+  };
+  finished(results);
+});
+```
 
 Notice the way this is sending messages using both the `send()` and `finished()` functions. Both will be intercepted by the `handleMessage()` function's callback.

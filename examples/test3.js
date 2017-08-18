@@ -33,7 +33,7 @@
 var qoper8 = require('ewd-qoper8');
 var q = new qoper8.masterProcess();
 
-q.on('started', function() {
+q.on('started', function () {
   console.log(q.version() + ' running in process ' + process.pid);
 
   var messageObj = {
@@ -51,7 +51,7 @@ q.on('started', function() {
 
 q.start();
 
-setTimeout(function() {
+setTimeout(function () {
   q.stop();
 }, 5000);
 

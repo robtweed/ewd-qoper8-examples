@@ -33,12 +33,12 @@
 var qoper8 = require('ewd-qoper8');
 var q = new qoper8.masterProcess();
 
-q.on('start', function() {
+q.on('start', function () {
   this.setWorkerPoolSize(2);
   this.worker.module = process.cwd() + '/examples/modules/example-worker-module';
 });
 
-q.on('started', function() {
+q.on('started', function () {
   console.log(q.version() + ' running in process ' + process.pid);
 
   var noOfMessages = 5;
@@ -54,17 +54,17 @@ q.on('started', function() {
 
 q.start();
 
-setTimeout(function() {
+setTimeout(function () {
   console.log(q.getStats());
 
-  q.getWorkerAvailability(function(available) {
+  q.getWorkerAvailability(function (available) {
     console.log('Worker availability: ' + JSON.stringify(available));
   });
 
   q.getAllWorkerStats();
 }, 5000);
 
-setTimeout(function() {
+setTimeout(function () {
   q.stop();
 }, 10000);
 

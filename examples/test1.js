@@ -37,6 +37,6 @@ console.log(q.version() + ' running in process ' + process.pid);
 
 q.start();
 
-setTimeout(function() {
+setTimeout(function () {
   q.stop();
 }, 10000);

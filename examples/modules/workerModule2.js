@@ -32,9 +32,9 @@ console.log('test-workerModule1 loaded into child process ' + process.pid);
 
 var count = 0;
 
-module.exports = function() {
+module.exports = function () {
 
-  this.on('message', function(messageObj, send, finished) {
+  this.on('message', function (messageObj, send, finished) {
 
     send({
       info: 'intermediate message',
@@ -49,9 +49,9 @@ module.exports = function() {
     finished(results);
   });
 
-  this.on('stop', function() {
+  this.on('stop', function () {
     console.log('Worker ' + process.pid + ': ' + JSON.stringify(this.getStats()));
   });
-  
+
 };
 
