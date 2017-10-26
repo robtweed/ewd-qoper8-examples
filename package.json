@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/robtweed/ewd-qoper8-examples#readme",
   "dependencies": {
-    "ewd-qoper8": "^3.13.0"
+    "ewd-qoper8": "^3.16.0"
   },
   "devDependencies": {
     "jshint": "^2.9.5",
