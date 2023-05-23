@@ -3,8 +3,8 @@
  ----------------------------------------------------------------------------
  | ewd-qoper8.js: Node.js Queue and Multi-process Manager                   |
  |                                                                          |
- | Copyright (c) 2016 M/Gateway Developments Ltd,                           |
- | Reigate, Surrey UK.                                                      |
+ | Copyright (c) 2023 MGateway Ltd,                                         |
+ | Redhill, Surrey UK.                                                      |
  | All rights reserved.                                                     |
  |                                                                          |
  | http://www.mgateway.com                                                  |
