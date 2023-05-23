@@ -23,7 +23,7 @@
     "ewd-qoper8": "^3.13.0"
   },
   "devDependencies": {
-    "jshint": "^2.9.5",
+    "jshint": "^2.13.6",
     "pre-commit": "^1.2.2"
   },
   "pre-commit": [
