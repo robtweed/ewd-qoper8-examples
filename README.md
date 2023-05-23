@@ -1,13 +1,13 @@
 # ewd-qoper8-examples
 
 Rob Tweed <rtweed@mgateway.com>  
-16 August 2017, M/Gateway Developments Ltd [http://www.mgateway.com](http://www.mgateway.com)  
+23 May 2023, MGateway Ltd [http://www.mgateway.com](http://www.mgateway.com)  
 
 Twitter: [@rtweed](https://twitter.com/rtweed)
 
 Google Group for discussions, support, advice etc: [http://groups.google.co.uk/group/enterprise-web-developer-community](http://groups.google.co.uk/group/enterprise-web-developer-community)
 
-© 2017 M/Gateway Developments Ltd
+© 2023 MGateway Ltd
 
 ---
 
